@@ -14,6 +14,7 @@ class TestBuilder
     @_retVal = 0
     @_preRequire = undefined
     @_globals = ['window', 'document']
+    @_mochaCommand = (alltests) -> 'mocha'
   # Pass in the handle for that Cakefile's task function
 
   @harnessModule: ->
@@ -49,6 +50,8 @@ class TestBuilder
       # TODO: remove this when Mocha is sane again.
       if require.main.filename.indexOf('mf-tools') < 0 then path.join('mf-tools', p) else p
 
+  mochaCommand: (@_mochaCommand) ->
+    @
   nodeEnv: (@_env) ->
   task: (@_task) ->
     @
@@ -89,20 +92,20 @@ class TestBuilder
       process.on 'exit', () =>
         process.reallyExit @retVal()
       if @_runTogether
-        @_runTests(@_getAllTestFiles(), 'Starting all tests...')
+        @_runTests(@_getAllTestFiles(), 'Starting all tests...', true)
       else
         for t of @_testDefinitions
           do (t) ->
             invoke "test:#{t}"
     @
-  _testCmd: ->
-    "NODE_PATH=$NODE_PATH:#{@_includePaths.join ':'} mocha --globals #{@_globals.join ','} -u #{@_mochaUi} -R #{@_mochaReporter} --require #{@_mochaPreRequire()}"
+  _testCmd: (alltests) ->
+    "NODE_PATH=$NODE_PATH:#{@_includePaths.join ':'} #{@_mochaCommand(alltests)} --globals #{@_globals.join ','} -u #{@_mochaUi} -R #{@_mochaReporter} --require #{@_mochaPreRequire()}"
 
   # Run our test.  If we're running in xunit output mode, we want to write each test file's
   # output to a separate file, so that xunit doesn't freak out.
-  _runTests: (files, msg) ->
+  _runTests: (files, msg, alltests) ->
     if @_runTogether
-      @_runTestProcess(files, msg)
+      @_runTestProcess(files, msg, alltests)
     else
       # Run each file/test in a seperate process
       for file in files
@@ -111,11 +114,12 @@ class TestBuilder
 
   # Run tests in mocha.  If we're running in xunit output mode, we want to write each test file's
   # output to a separate file, so that xunit doesn't freak out.
-  _runTestProcess: (files, msg) ->
+  _runTestProcess: (files, msg, alltests) ->
     childEnv = {}
     childEnv[k] = v for k,v of process.env
     childEnv["NODE_ENV"] ?= (@_env ? "test")
-    child = exec "#{@_testCmd()} #{files.join(' ')}",
+    console.log 'testCmd: ', @_testCmd(alltests)
+    child = exec "#{@_testCmd(alltests)} #{files.join(' ')}",
       env: childEnv
       encodig: 'utf8'
     , (err, stdout, stderr) =>
