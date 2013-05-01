@@ -118,7 +118,6 @@ class TestBuilder
     childEnv = {}
     childEnv[k] = v for k,v of process.env
     childEnv["NODE_ENV"] ?= (@_env ? "test")
-    console.log 'testCmd: ', @_testCmd(alltests)
     child = exec "#{@_testCmd(alltests)} #{files.join(' ')}",
       env: childEnv
       encodig: 'utf8'
