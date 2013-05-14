@@ -122,10 +122,9 @@ class TestBuilder
       env: childEnv
       encodig: 'utf8'
     , (err, stdout, stderr) =>
-      # console.log "\n#{msg}\n==========================="
-      util.puts stdout  # verbiage
-      console.log stderr  # test summary
       @_retVal = 1 if err != null
+    child.stdout.pipe(process.stdout)
+    child.stderr.pipe(process.stderr)
     if @_mochaReporter == 'xunit'
       file = files[0] # Use first file for report filename
       fs.mkdirSync('reports') unless fs.readdirSync('.').indexOf('reports') >= 0
