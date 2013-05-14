@@ -1,7 +1,7 @@
 {
   "name": "mf-tools",
   "description": "Build and test tools.",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "author": "Mason Browne <mason@massivelyfun.com>",
   "contributors": [
     {"name": "Dean Hudson", "email": "dean@massivelyfun.com"},
@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "glob" : "~ 3.1.14",
-    "jsdom": "~ 0.2.19"
+    "jsdom": "~ 0.2.19",
+    "underscore": "~ 1.4.3",
+    "winston" : "0.7.1"
   },
   "devDependencies": {
     "coffee-script": "~ 1.6.2",
