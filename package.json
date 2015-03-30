@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "glob": "^3.1.21",
-    "jsdom": "^0.2.19"
+    "jsdom": "^3.1.2"
   },
   "devDependencies": {
     "coffee-script": "~ 1.6.3",
